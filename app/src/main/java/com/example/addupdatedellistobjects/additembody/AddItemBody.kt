@@ -1,5 +1,6 @@
 package com.example.addupdatedellistobjects.additembody
 
+import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -19,9 +20,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.addupdatedellistobjects.ExerciseDataItem
 import com.example.addupdatedellistobjects.ExercisesImageItem
 import com.example.addupdatedellistobjects.R
 import com.example.addupdatedellistobjects.SampleData
@@ -29,11 +32,23 @@ import com.example.addupdatedellistobjects.SampleData
 import com.example.addupdatedellistobjects.exerciselistbody.CreateExerciseListBody
 
 @Composable
-fun CreateAddItemBody(modifier: Modifier = Modifier) {
+fun CreateAddItemBody(exerciseList: MutableList<ExerciseDataItem>, modifier: Modifier = Modifier) {
 
     var itemPosition by remember {
         mutableStateOf(-1)
     }
+
+    var description by remember {
+        mutableStateOf("")
+    }
+
+    var ifDescriptionEmpty by remember {
+        mutableStateOf(false)
+    }
+    var isImageSelected by remember {
+        mutableStateOf(false)
+    }
+    val context = LocalContext.current
 
     Surface(
         modifier = modifier
@@ -52,11 +67,11 @@ fun CreateAddItemBody(modifier: Modifier = Modifier) {
                 modifier = modifier
                     .padding(horizontal = 10.dp, vertical = 20.dp)
                     .background(color = Color.Gray, shape = RoundedCornerShape(10.dp))
-                    .height(70.dp),
+                    .height(50.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 TextField(modifier = modifier.weight(1f),
-                    value = "",
+                    value = description,
                     colors = TextFieldDefaults.textFieldColors(
                         textColor = Color.White,
                         disabledTextColor = Color.Transparent,
@@ -65,12 +80,40 @@ fun CreateAddItemBody(modifier: Modifier = Modifier) {
                         unfocusedIndicatorColor = Color.Transparent,
                         disabledIndicatorColor = Color.Transparent
                     ),
-                    onValueChange = {},
+                    onValueChange = {
+                        description = it
+                        ifDescriptionEmpty = it.isEmpty()
+                    },
                     placeholder = { Text(text = "Enter Description here", color = Color.White) }
                 )
-                OutlinedButton(onClick = {}, modifier = modifier
-                    .fillMaxHeight()
-                    .width(100.dp)) {
+                OutlinedButton(
+                    onClick = {
+
+                        if (!ifDescriptionEmpty) {
+                            if (isImageSelected) {
+                                exerciseList.add(
+                                    ExerciseDataItem(
+                                        description,
+                                        SampleData.exerciseImageList.get(itemPosition)
+                                    )
+                                )
+
+                                ifDescriptionEmpty = true
+                                description = ""
+                                isImageSelected = false
+                                itemPosition=-1
+
+                            }
+                        } else {
+
+                            showToast(context)
+                        }
+
+
+                    }, modifier = modifier
+                        .fillMaxHeight()
+                        .width(100.dp)
+                ) {
                     Text(text = "Add")
                 }
             }
@@ -84,6 +127,7 @@ fun CreateAddItemBody(modifier: Modifier = Modifier) {
                         isBorderEnabled = index == itemPosition
                     ) {
                         itemPosition = index
+                        isImageSelected = true
 
                     }
                 }
@@ -94,6 +138,14 @@ fun CreateAddItemBody(modifier: Modifier = Modifier) {
 
 
     }
+}
+
+fun showToast(context: Context) {
+    Toast.makeText(
+        context,
+        "Please Add Description and selection exercise image",
+        Toast.LENGTH_SHORT
+    ).show()
 }
 
 
@@ -126,5 +178,5 @@ fun CreateHorizontalExerciseList(
 @Preview(showBackground = true)
 @Composable
 fun PreviewHorizontalExerciseList() {
-    CreateAddItemBody()
+    CreateAddItemBody(mutableListOf())
 }

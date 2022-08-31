@@ -2,6 +2,9 @@ package com.example.addupdatedellistobjects.exerciselistbody
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
@@ -18,38 +21,55 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.addupdatedellistobjects.ExerciseDataItem
 import com.example.addupdatedellistobjects.R
 
 @Composable
-fun CreateExerciseListBody() {
-    ExerciseListBoyItem()
+fun CreateExerciseListBody(
+    exerciseList: MutableList<ExerciseDataItem>,
+    onButtonClicks: () -> Unit
+) {
+    LazyColumn {
+        itemsIndexed(exerciseList) { index, item ->
+            ExerciseListBoyItem(
+                item,
+                onButtonClick = { exerciseList.removeAt(index) })
+
+        }
+    }
+//    ExerciseListBoyItem()
 }
 
 @Composable
-fun ExerciseListBoyItem(modifier: Modifier = Modifier) {
+fun ExerciseListBoyItem(
+
+    exerciseDataItem: ExerciseDataItem,
+    onButtonClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Surface(
         modifier = modifier
             .fillMaxWidth()
-            .height(100.dp)
+            .height(70.dp).padding(vertical = 4.dp)
             .clip(RoundedCornerShape(20.dp)),
         color = Color.Gray
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Image(
-                painter = painterResource(id = R.drawable.yoga),
+                painter = painterResource(id = exerciseDataItem.resourceID),
                 contentDescription = "Yoga image",
-                modifier = modifier.size(100.dp),
+                modifier = modifier.size(70.dp),
                 contentScale = ContentScale.Crop
             )
             Text(
-                text = "Yoga is ver good remedy for health. you can do it home, in park on the roof, do it as soon as possible",
+                text = exerciseDataItem.taskDescription,
                 style = MaterialTheme.typography.h5.copy(color = Color.White),
                 modifier = modifier
                     .weight(1f)
                     .padding(horizontal = 20.dp),
                 maxLines = 1,
             )
-            Button(onClick = {}, modifier = modifier.fillMaxHeight()) {
+            Button(onClick = onButtonClick, modifier = modifier.fillMaxHeight()) {
                 Text(text = "Delete")
             }
         }
@@ -59,5 +79,7 @@ fun ExerciseListBoyItem(modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 @Composable
 fun PreviewExerciseListBody() {
-    CreateExerciseListBody()
+    CreateExerciseListBody(
+        mutableListOf(ExerciseDataItem("Here is description", R.drawable.yoga)),
+        onButtonClicks = {})
 }
