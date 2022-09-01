@@ -67,7 +67,7 @@ fun CreateAddItemBody(exerciseList: MutableList<ExerciseDataItem>, modifier: Mod
                 modifier = modifier
                     .padding(horizontal = 10.dp, vertical = 20.dp)
                     .background(color = Color.Gray, shape = RoundedCornerShape(10.dp))
-                    .height(50.dp),
+                    .height(55.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 TextField(modifier = modifier.weight(1f),
